@@ -8,14 +8,18 @@ const { title, description, lastUpdated } = Astro.props;
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title} — RR Engine</title>
   <meta name="description" content={description} />
-  <meta name="theme-color" content="#0F172A" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="theme-color" content="#0A1F44" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
   <meta name="robots" content="index, follow" />
 </head>
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a href="/" class="logo">RR Engine</a>
+      <a href="/" class="logo">
+        <img src="/logo.png" alt="RR Engenharia" class="logo-img" />
+        <span>RR Engine</span>
+      </a>
       <nav>
         <a href="/#planos">Planos</a>
         <a href="/#faq">FAQ</a>
@@ -44,10 +48,10 @@ const { title, description, lastUpdated } = Astro.props;
   :root {
     --color-bg: #ffffff;
     --color-bg-alt: #f8fafc;
-    --color-text: #0f172a;
+    --color-text: #0a1f44;
     --color-text-muted: #475569;
-    --color-accent: #1e40af;
-    --color-accent-hover: #1e3a8a;
+    --color-accent: #1652f0;
+    --color-accent-hover: #0e3dc4;
     --color-border: #e2e8f0;
     --container: 1152px;
     --container-narrow: 768px;
@@ -99,6 +103,15 @@ const { title, description, lastUpdated } = Astro.props;
     color: var(--color-text);
     text-decoration: none;
     letter-spacing: -0.02em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .logo-img {
+    height: 32px;
+    width: auto;
+    display: block;
   }
 
   .site-header nav {
