@@ -74,6 +74,93 @@ const faqs = [
     a: "O pipeline tem variante para obra pública: cláusulas de licitação, ART, regime de empreitada por preço unitário. A versão pública precisa de configuração específica — entre em contato pra ativar.",
   },
 ];
+
+const SITE_URL = "https://engine.rres.com.br";
+const GA_ID = import.meta.env.PUBLIC_GA_ID || "";
+const GSC_TOKEN = import.meta.env.PUBLIC_GSC_TOKEN || "";
+
+// Schema.org SoftwareApplication
+const softwareSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "RR Engine",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "description": "Pipeline de 10 agentes de IA que transforma memorial descritivo em proposta comercial, memória de cálculo XLSX e cronograma físico em 15 minutos.",
+  "url": SITE_URL,
+  "image": `${SITE_URL}/og-image.png`,
+  "publisher": {
+    "@type": "Organization",
+    "name": "RR Engenharia",
+    "url": "https://rres.com.br",
+  },
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Avulso",
+      "price": "89.90",
+      "priceCurrency": "BRL",
+      "description": "Pagamento por orçamento individual",
+    },
+    {
+      "@type": "Offer",
+      "name": "Profissional",
+      "price": "450.00",
+      "priceCurrency": "BRL",
+      "description": "10 orçamentos por mês",
+    },
+    {
+      "@type": "Offer",
+      "name": "Empresarial",
+      "price": "990.00",
+      "priceCurrency": "BRL",
+      "description": "25 orçamentos por mês",
+    },
+  ],
+  "inLanguage": "pt-BR",
+};
+
+// Schema.org Organization
+const orgSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "RR Engenharia",
+  "alternateName": "RR Engine",
+  "url": SITE_URL,
+  "logo": `${SITE_URL}/logo.png`,
+  "description": "RR Engenharia — produto RR Engine para orçamentação automatizada de obras civis com IA.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Rio de Janeiro",
+    "addressRegion": "RJ",
+    "addressCountry": "BR",
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+55-21-99574-0273",
+    "email": "contato@rres.com.br",
+    "contactType": "customer service",
+    "availableLanguage": "Portuguese",
+  },
+  "sameAs": [
+    "https://www.linkedin.com/company/rresengenharia/",
+  ],
+  "taxID": "46.887.631/0001-75",
+};
+
+// Schema.org FAQPage
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map((item) => ({
+    "@type": "Question",
+    "name": item.q,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.a,
+    },
+  })),
+};
 ---
 
 <!doctype html>
@@ -86,11 +173,42 @@ const faqs = [
   <meta name="theme-color" content="#0A1F44" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/favicon.png" />
-  <meta property="og:title" content="RR Engine — Orçamento de obra civil em 15 minutos" />
-  <meta property="og:description" content="Pipeline de 10 agentes de IA que produz proposta + memória + cronograma a partir do memorial descritivo." />
+  <link rel="canonical" href={SITE_URL} />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="RR Engine — Orçamento de obra civil em 15 minutos. Auditado." />
+  <meta property="og:description" content="Pipeline de 10 agentes de IA que produz proposta comercial, memória de cálculo XLSX e cronograma físico a partir do memorial descritivo. Base SINAPI e PINI atualizadas." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://engine.rres.com.br" />
+  <meta property="og:url" content={SITE_URL} />
   <meta property="og:locale" content="pt_BR" />
+  <meta property="og:image" content={`${SITE_URL}/og-image.png`} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="RR Engine — Orçamento de obra civil em 15 minutos" />
+  <meta property="og:site_name" content="RR Engine" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="RR Engine — Orçamento de obra civil em 15 minutos. Auditado." />
+  <meta name="twitter:description" content="Pipeline de 10 agentes de IA que produz proposta comercial, memória de cálculo XLSX e cronograma físico a partir do memorial descritivo." />
+  <meta name="twitter:image" content={`${SITE_URL}/og-image.png`} />
+
+  <!-- Google Search Console verification (preencher PUBLIC_GSC_TOKEN no .env quando registrar a propriedade) -->
+  {GSC_TOKEN && <meta name="google-site-verification" content={GSC_TOKEN} />}
+
+  <!-- JSON-LD: SoftwareApplication, Organization, FAQPage -->
+  <script type="application/ld+json" set:html={JSON.stringify(softwareSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <!-- Google Analytics 4 (carrega só se PUBLIC_GA_ID estiver configurado no .env) -->
+  {GA_ID && (
+    <>
+      <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+      <script set:html={`window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', '${GA_ID}', { anonymize_ip: true });`}></script>
+    </>
+  )}
 </head>
 <body>
   <header class="site-header">
