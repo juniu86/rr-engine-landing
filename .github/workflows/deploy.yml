@@ -24,6 +24,9 @@ jobs:
         uses: withastro/action@v3
         with:
           node-version: 22
+        env:
+          PUBLIC_GA_ID: G-CJP1H6K66N
+          PUBLIC_GSC_TOKEN: ${{ vars.PUBLIC_GSC_TOKEN }}
 
   deploy:
     needs: build
