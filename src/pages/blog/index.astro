@@ -1,0 +1,186 @@
+---
+import { getCollection } from "astro:content";
+import "../../styles/blog.css";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const SITE_URL = "https://engine.rres.com.br";
+const canonicalUrl = `${SITE_URL}/blog/`;
+const GA_ID = import.meta.env.PUBLIC_GA_ID || "";
+const GSC_TOKEN = import.meta.env.PUBLIC_GSC_TOKEN || "";
+
+const formatDate = (d: Date) =>
+  new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(d);
+
+const blogSchema = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  name: "Blog RR Engine",
+  description:
+    "Conteúdo prático sobre orçamentação de obras civis, BDI, SINAPI, gestão de empreitadas e produtividade pra empreiteiras pequenas.",
+  url: canonicalUrl,
+  inLanguage: "pt-BR",
+  publisher: {
+    "@type": "Organization",
+    name: "RR Engenharia",
+    logo: {
+      "@type": "ImageObject",
+      url: `${SITE_URL}/logo.png`,
+    },
+  },
+};
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog — RR Engine</title>
+    <meta
+      name="description"
+      content="Conteúdo prático sobre orçamentação de obras civis, BDI, SINAPI e gestão de empreitadas. Sem clichê. Pra quem orça de verdade."
+    />
+    <meta name="theme-color" content="#0A1F44" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta name="robots" content="index, follow" />
+
+    <meta property="og:title" content="Blog — RR Engine" />
+    <meta
+      property="og:description"
+      content="Conteúdo prático sobre orçamentação de obras civis, BDI, SINAPI e gestão de empreitadas."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:image" content={`${SITE_URL}/og-image.png`} />
+    <meta property="og:site_name" content="RR Engine" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Blog — RR Engine" />
+    <meta
+      name="twitter:description"
+      content="Conteúdo prático sobre orçamentação de obras civis."
+    />
+    <meta name="twitter:image" content={`${SITE_URL}/og-image.png`} />
+
+    {
+      GSC_TOKEN && (
+        <meta name="google-site-verification" content={GSC_TOKEN} />
+      )
+    }
+
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(blogSchema)}
+    />
+
+    {
+      GA_ID && (
+        <>
+          <script
+            async
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+          />
+          <script
+            set:html={`window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', '${GA_ID}', { anonymize_ip: true });`}
+          />
+        </>
+      )
+    }
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="/" class="logo">
+          <img src="/logo.png" alt="RR Engenharia" class="logo-img" />
+          <span>RR Engine</span>
+        </a>
+        <nav>
+          <a href="/blog">Blog</a>
+          <a href="/#planos">Planos</a>
+          <a href="/#faq">FAQ</a>
+          <a
+            href="https://engine.rres.com.br"
+            class="nav-login"
+            rel="noopener">Entrar</a
+          >
+          <a href="/#contato" class="nav-cta">Fazer demo</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="bg-mesh" aria-hidden="true"></div>
+
+    <main class="blog-list-main">
+      <div class="container">
+        <div class="blog-hero">
+          <h1>Blog RR Engine</h1>
+          <p>
+            Conteúdo prático sobre orçamentação de obras civis. Sem clichê,
+            sem teoria solta. Material pra quem orça de verdade.
+          </p>
+        </div>
+
+        {
+          posts.length === 0 ? (
+            <div
+              class="glass"
+              style="padding: 3rem; text-align: center; max-width: 600px; margin: 0 auto;"
+            >
+              <p style="color: var(--text-muted); margin: 0;">
+                Em breve. Estamos preparando os primeiros artigos.
+              </p>
+            </div>
+          ) : (
+            <div class="blog-grid">
+              {posts.map((post) => (
+                <a
+                  href={`/blog/${post.id}/`}
+                  class="blog-card glass"
+                >
+                  {post.data.tags.length > 0 && (
+                    <div class="blog-tags">
+                      {post.data.tags.slice(0, 2).map((t) => (
+                        <span class="blog-tag">{t}</span>
+                      ))}
+                    </div>
+                  )}
+                  <h2>{post.data.title}</h2>
+                  <p class="blog-card-description">{post.data.description}</p>
+                  <div class="blog-card-meta">
+                    <time datetime={post.data.pubDate.toISOString()}>
+                      {formatDate(post.data.pubDate)}
+                    </time>
+                    {post.data.readingTime && (
+                      <>
+                        <span aria-hidden="true">•</span>
+                        <span>{post.data.readingTime}</span>
+                      </>
+                    )}
+                  </div>
+                </a>
+              ))}
+            </div>
+          )
+        }
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p class="footer-copy">
+          © {new Date().getFullYear()} RR Engenharia. Todos os direitos reservados.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
